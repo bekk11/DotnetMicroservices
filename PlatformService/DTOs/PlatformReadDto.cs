@@ -1,6 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-
-namespace PlatformService.DTOs;
+﻿namespace PlatformService.DTOs;
 
 public class PlatformReadDto
 {

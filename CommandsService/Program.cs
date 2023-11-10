@@ -1,3 +1,7 @@
+using CommandsService.AsyncDataServices;
+using CommandsService.Data;
+using CommandsService.EventProcessing;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -5,24 +9,25 @@ var builder = WebApplication.CreateBuilder(args);
 const string apiVersion = "v1.0";
 
 // Add services to the container.
+builder.Services.AddScoped<ICommandRepo, CommandRepo>();
+builder.Services.AddSingleton<IEventProcessor, EventProcessor>();
 
 builder.Services.AddControllers();
+
+builder.Services.AddHostedService<MessageBusSubscriber>();
+    
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSwaggerGen(c =>
     {
         c.SwaggerDoc(apiVersion, new OpenApiInfo { Title = "Internship Platform API", Version = apiVersion });
     }
 );
 
-var app = builder.Build();
+builder.Services.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("InMem"));
 
-// Configure the HTTP request pipeline.
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseSwagger();
-//     app.UseSwaggerUI();
-// }
+var app = builder.Build();
 
 app.UseSwagger(options => { options.RouteTemplate = "api/c/swagger/{documentName}/swagger.json"; });
 app.UseSwaggerUI(options =>

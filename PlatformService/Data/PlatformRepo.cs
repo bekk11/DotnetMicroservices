@@ -28,10 +28,7 @@ public class PlatformRepo : IPlatformRepo
 
     public void CreatePlatform(Platform platform)
     {
-        if (platform == null)
-        {
-            throw new ArgumentNullException(nameof(platform));
-        }
+        if (platform == null) throw new ArgumentNullException(nameof(platform));
 
         _dbContext.Platforms.Add(platform);
     }
